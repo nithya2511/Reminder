@@ -8,7 +8,44 @@
 import SwiftUI
 
 struct HomeView : View {
+    @State private var searchText = ""
     var body: some View {
-        Text("Hello, World!")
+        NavigationStack {
+            VStack(){
+                
+            }
+            .searchable(text: $searchText)
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        print("Top right button clicked")
+                    }label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                }
+            }
+            .defualtPageRightPadding()
+        }
     }
+}
+
+struct TileView : View {
+    var body : some View {
+        Text("")
+    }
+}
+
+struct ListView : View {
+    var body : some View {
+        Text("")
+    }
+}
+
+struct BottomBarView : View {
+    var body : some View {
+        Text("")
+    }
+}
+#Preview {
+    HomeView()
 }
