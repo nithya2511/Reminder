@@ -11,7 +11,11 @@ import SwiftUI
 struct ReminderApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            ZStack {
+                AppTheme.background
+                    .ignoresSafeArea()
+                HomeView()
+            }
         }
     }
 }

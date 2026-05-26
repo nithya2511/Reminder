@@ -12,11 +12,12 @@ struct DefaultPageRightPadding: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(.trailing, 20)
+            .padding(.leading, 20)
     }
 }
 
 extension View {
-    func defualtPageRightPadding() -> some View {
+    func defaultPageRightPadding() -> some View {
         self.modifier(DefaultPageRightPadding())
     }
 }
