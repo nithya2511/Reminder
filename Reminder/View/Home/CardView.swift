@@ -11,37 +11,82 @@ struct CardView : View {
     let category : CardCategory
     
     var body: some View {
-        Button{
-        } label: {
-            HStack{
-                VStack (alignment : .leading){
-                    Image(systemName: category.iconName)
-                        .foregroundStyle(.white)
-                        .frame(width: 32, height: 32)
-                        .background{
-                            Circle()
-                                .fill(category.iconColor)
-                        }
+        if #available(iOS 26.0, *) {
+            Button{
+            } label: {
+                HStack{
+                    VStack (alignment : .leading){
+                        Image(systemName: category.iconName)
+                            .foregroundStyle(.white)
+                            .frame(width: 32, height: 32)
+                            .foregroundStyle(Color.white)
+                        Spacer()
+                        Text(category.cardTitle)
+                    }
+                    
                     Spacer()
-                    Text(category.cardTitle)
+                    
+                    VStack {
+                        Text("\(category.reminderCount)")
+                            .fontWeight(.bold)
+                            .font(Font.system(size: 24))
+                        Spacer()
+                    }
                 }
+                .foregroundStyle(Color.white)
+            }
+            .padding()
+            .glassEffect(
+                .regular.tint(category.iconColor.opacity(0.8)),
                 
-                Spacer()
-                
-                VStack {
-                    Text("\(category.reminderCount)")
-                        .foregroundStyle(.black)
-                        .fontWeight(.bold)
-                        .font(Font.system(size: 24))
-                    Spacer()
-                }
+                in: RoundedRectangle(cornerRadius: 20)
+            )
+            
+            .overlay(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                .white.opacity(0.45),
+                                .white.opacity(0.05),
+                                .clear
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .allowsHitTesting(false)
             }
         }
-        .padding()
-        .background{
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white)
+        else {
+            Button{
+            } label: {
+                HStack{
+                    VStack (alignment : .leading){
+                        Image(systemName: category.iconName)
+                            .foregroundStyle(.white)
+                            .frame(width: 32, height: 32)
+                            .foregroundStyle(Color.white)
+                        Spacer()
+                        Text(category.cardTitle)
+                    }
+                    
+                    Spacer()
+                    
+                    VStack {
+                        Text("\(category.reminderCount)")
+                            .fontWeight(.bold)
+                            .font(Font.system(size: 24))
+                        Spacer()
+                    }
+                }
+                .foregroundStyle(Color.white)
+            }
+            .padding()
+            .background{
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(category.iconColor)
+            }
         }
-            
     }
 }

@@ -14,18 +14,26 @@ struct HomeView : View {
         NavigationStack {
             ZStack{
                 AppTheme.background.ignoresSafeArea()
-                
-                VStack(){
-                    TileView(homeViewModel: homeViewModel)
-                    ListView()
+                ScrollView {
+                    VStack(){
+                        TileView(categories: homeViewModel.categories)
+                        ListView(reminderCategoryList : homeViewModel.reminderCategoryList)
+                    }
                 }
                 .defaultPageRightPadding()
             }
-            .searchable(
-                text: $homeViewModel.searchText,
-                placement: .navigationBarDrawer(displayMode: .always)
-            )
             .toolbar{
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button{
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    //TODO: CHange icon later
+                    Button{
+                    } label: {
+                        Image(systemName: "list.bullet.rectangle")
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                     }label: {
@@ -33,30 +41,50 @@ struct HomeView : View {
                     }
                 }
             }
+            .overlay(alignment : .bottomTrailing) {
+                BottomBarView()
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 20)
+                    
+            }
             
-        }
-    }
-}
-
-
-
-
-struct ListView : View {
-    var body : some View {
-        VStack {
-            Text("My Lists")
-                .font(Font.system(size: 32, weight: .bold, design: .rounded))
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
         
     }
 }
 
-struct BottomBarView : View {
+
+
+
+
+
+struct ListView : View {
+    let reminderCategoryList : [ReminderCategoryListItem]
     var body : some View {
-        Text("")
+        VStack {
+            Text("My Lists")
+                .font(Font.system(size: 26, weight: .bold, design: .rounded))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack {
+                ForEach(reminderCategoryList) { listItem in
+                    NavigationLink{
+                        ReminderListDetailView(reminderListItem : listItem)
+                    } label: {
+                        ReminderListItemView(reminderListItem: listItem)
+                        
+                    }
+                }
+            }
+            .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+            .background{
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.white)
+            }
+        }
+        
     }
 }
+
 #Preview {
     HomeView()
 }

@@ -8,16 +8,14 @@
 import SwiftUI
 
 struct TileView : View {
-    @ObservedObject var homeViewModel : HomeViewModel
+    let categories : [CardCategory]
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
     
     var body : some View {
-        ScrollView {
             LazyVGrid(columns : columns , spacing: 10){
-                ForEach(homeViewModel.categories) {
+                ForEach(categories) {
                     category in CardView(category : category)
                 }
-            }
         }
     }
 }
