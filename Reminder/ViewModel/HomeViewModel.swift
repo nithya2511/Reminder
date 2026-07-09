@@ -10,14 +10,32 @@ import SwiftUI
 class HomeViewModel : ObservableObject {
     @Published var searchText: String = ""
     @Published private(set) var categories : [CardCategory] = []
-    @Published private(set) var reminderCategoryList : [ReminderCategoryListItem] = []
+    @Published private(set) var titleNames : [Title] = []
+    @Published var isShowingCreateNewListSheet = false
+    @Published var isShowingCreateNewReminderSheet = false
     
     init() {
         loadCategories()
-        loadReminderCategoryList()
+        loadTitleNames()
     }
     
-    //TODO: These categories are hardcoded - need to fix dynamic loading of values 
+    func createNewListButtonTapped() {
+        self.isShowingCreateNewListSheet = true
+    }
+    
+    func closeCreateNewListSheet() {
+        self.isShowingCreateNewListSheet = false
+    }
+    
+    
+    func onAddButtonTapped() {
+        self.isShowingCreateNewReminderSheet = true
+    }
+    
+    func closeCreateNewReminderSheet() {
+        self.isShowingCreateNewReminderSheet = false
+    }
+    //TODO: These categories are hardcoded - need to fix dynamic loading of values
     func loadCategories() {
         categories = [
             CardCategory(
@@ -53,11 +71,11 @@ class HomeViewModel : ObservableObject {
         ]
     }
     
-    func loadReminderCategoryList() {
-        reminderCategoryList = [
-            ReminderCategoryListItem(
+    func loadTitleNames() {
+        titleNames  = [
+            Title(
                 title: "Pantry",
-                iconColor: .red,
+                iconColor: Color.red,
                 iconName: "list",
                 info: nil,
                 count: 3,
@@ -67,7 +85,7 @@ class HomeViewModel : ObservableObject {
                     Reminder(text: "Item3", info: nil)
                 ]
             ),
-            ReminderCategoryListItem(
+            Title(
                 title: "Reminder",
                 iconColor: .blue,
                 iconName: "list",
@@ -75,7 +93,7 @@ class HomeViewModel : ObservableObject {
                 count: 3,
                 reminders: [Reminder(text: "Item1", info: nil), Reminder(text: "Item2", info: nil), Reminder(text: "Item3", info: nil)]
             ),
-            ReminderCategoryListItem(
+            Title(
                 title: "Use immediatly",
                 iconColor: .orange,
                 iconName: "list",
@@ -83,7 +101,7 @@ class HomeViewModel : ObservableObject {
                 count: 3,
                 reminders: [Reminder(text: "Item1", info: nil), Reminder(text: "Item2", info: nil), Reminder(text: "Item3", info: nil)]
             ),
-            ReminderCategoryListItem(
+            Title(
                 title: "Shopping List",
                 iconColor: .gray,
                 iconName: "list",
@@ -92,8 +110,8 @@ class HomeViewModel : ObservableObject {
                 reminders: [Reminder(text: "Item1", info: nil), Reminder(text: "Item2", info: nil), Reminder(text: "Item3", info: nil),
                     Reminder(text: "ItemLast", info: nil)]
             ),
-            ReminderCategoryListItem(
-                title: "Kauflans",
+            Title(
+                title: "Kaufland",
                 iconColor: .black,
                 iconName: "list",
                 info: nil,
@@ -101,6 +119,10 @@ class HomeViewModel : ObservableObject {
                 reminders: [Reminder(text: "Item1", info: nil), Reminder(text: "Item2", info: nil), Reminder(text: "Item3", info: nil)]
             )
         ]
+    }
+    
+    func addList(named title : Title) {
+        titleNames.append(title)
     }
 }
 

@@ -9,16 +9,14 @@ import SwiftUI
 
 
 struct ReminderView : View {
-    var reminder : Reminder
+    @State private var reminder : Reminder
     var shouldShowInfoButton : Bool = false
-    @State private var reminderText : String
-    @State private var reminderSubText : String
-    @FocusState private var isReminderTextFocused : Bool
+    @State private var reminderText : String = ""
+    @State private var reminderSubText : String = ""
+//    @FocusState.Binding  var focusedField : ReminderFocusedField? = nil
     
     init(reminder : Reminder){
         self.reminder = reminder
-        self.reminderText = reminder.text
-        self.reminderSubText = reminder.info ?? ""
     }
     
     var body : some View {
@@ -34,32 +32,8 @@ struct ReminderView : View {
             //text and subtext
             VStack (alignment : .leading){
                 TextField(reminder.text, text: $reminderText)
-                    .focused($isReminderTextFocused)
-                    .toolbar{
-                        ToolbarItemGroup (placement : .keyboard){
-                            Button {
-                            } label: {
-                                Image(systemName: "calendar")
-                            }
-                            
-                            Button {
-                            } label: {
-                                Image(systemName: "flag")
-                            }
-                            
-                            Button {
-                            } label: {
-                                Image(systemName: "info.circle")
-                            }
-                            
-                            Spacer()
-                            
-                            Button("Done") {
-                                // hide keyboard
-                            }
-                        }
-                    }
-                
+                    .font(.headline)
+                    .foregroundStyle(.primary)
                 if let subtext = reminder.info {
                     TextField(subtext, text: $reminderSubText)
                         .font(.subheadline)
@@ -90,6 +64,8 @@ struct ReminderView : View {
         }
     }
 }
+
+
 
 #Preview {
     ReminderView(reminder: Reminder(text: "rem 1", info: "Added by You"))

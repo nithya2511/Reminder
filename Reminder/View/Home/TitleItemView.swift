@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ReminderListItemView: View {
-    var reminderListItem : ReminderCategoryListItem
+struct TitleItemView: View {
+    var titleItem : Title
     
     var body : some View {
         HStack{
@@ -17,13 +17,13 @@ struct ReminderListItemView: View {
                 .frame(width: 36, height: 36)
                 .background{
                     Circle()
-                        .fill(reminderListItem.iconColor)
+                        .fill(titleItem.iconColor)
                 }
             
             VStack(spacing : 0){
                 HStack {
                     VStack (alignment : .leading){
-                        Text(reminderListItem.title)
+                        Text(titleItem.title)
                             .font(
                                 Font
                                     .system(
@@ -34,7 +34,7 @@ struct ReminderListItemView: View {
                             )
                             .foregroundStyle(.black)
                         
-                        Text(reminderListItem.info ?? "")
+                        Text(titleItem.info ?? "")
                             .foregroundStyle(.gray)
                             .font(Font.system(size: 14, weight: .regular, design: .rounded))
                     }
@@ -42,7 +42,7 @@ struct ReminderListItemView: View {
                     
                     Spacer()
                     
-                    Text("\(reminderListItem.count)")
+                    Text("\(titleItem.count)")
                         .padding()
                         .font(
                             Font.system(size: 22, weight: .semibold, design: .rounded)
@@ -65,8 +65,8 @@ struct ReminderListItemView: View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-    ReminderListItemView(
-        reminderListItem: ReminderCategoryListItem(
+    TitleItemView(
+        titleItem: Title(
             title: "Pantry",
             iconColor: .red,
             iconName: "list.bullet",

@@ -57,6 +57,7 @@ struct CardView : View {
                     )
                     .allowsHitTesting(false)
             }
+            .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 3)
         }
         else {
             Button{
@@ -87,6 +88,7 @@ struct CardView : View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(category.iconColor)
             }
+            .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 3)
         }
     }
 }

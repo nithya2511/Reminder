@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct BottomBarView: View {
+    let onAdd : () -> Void
+    
     var body: some View {
-       
             Button {
+                onAdd()
             } label: {
                 Image(systemName: "plus")
             }
@@ -21,6 +23,7 @@ struct BottomBarView: View {
                 Circle()
                     .fill(Color.blue)
             }
+            .padding([.trailing, .bottom], 20)
             
     }
 }

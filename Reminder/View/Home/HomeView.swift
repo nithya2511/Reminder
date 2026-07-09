@@ -17,39 +17,54 @@ struct HomeView : View {
                 ScrollView {
                     VStack(){
                         TileView(categories: homeViewModel.categories)
-                        ListView(reminderCategoryList : homeViewModel.reminderCategoryList)
+                        ListView(
+                            titleNames : homeViewModel.titleNames
+                        )
                     }
                 }
                 .defaultPageRightPadding()
             }
             .toolbar{
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button{
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    //TODO: CHange icon later
-                    Button{
-                    } label: {
-                        Image(systemName: "list.bullet.rectangle")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                    }label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                }
+                toolbarContent
             }
             .overlay(alignment : .bottomTrailing) {
-                BottomBarView()
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 20)
-                    
+                BottomBarView {
+                    homeViewModel.onAddButtonTapped()
+                }
             }
-            
+            .sheet(
+                isPresented: $homeViewModel.isShowingCreateNewListSheet){
+                    CreateNewListView(onSave: { newList in
+                        homeViewModel.addList(named: newList)
+                        
+                    })
+                        .presentationBackground(AppTheme.background)
+                }
+            .sheet(isPresented: $homeViewModel.isShowingCreateNewReminderSheet) {
+                CreateNewReminderView(titleNames: homeViewModel.titleNames)
+            }
         }
-        
+    }
+    
+    
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .topBarTrailing) {
+            Button{
+            } label: {
+                Image(systemName: "magnifyingglass")
+            }
+            //TODO: Change icon later
+            Button{
+                homeViewModel.createNewListButtonTapped()
+            } label: {
+                Image(systemName: "list.bullet.rectangle")
+            }
+            Button {
+            }label: {
+                Image(systemName: "ellipsis.circle")
+            }
+        }
     }
 }
 
@@ -58,19 +73,20 @@ struct HomeView : View {
 
 
 
+
 struct ListView : View {
-    let reminderCategoryList : [ReminderCategoryListItem]
+    let titleNames : [Title]
     var body : some View {
         VStack {
             Text("My Lists")
                 .font(Font.system(size: 26, weight: .bold, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .leading)
             VStack {
-                ForEach(reminderCategoryList) { listItem in
+                ForEach(titleNames) { title in
                     NavigationLink{
-                        ReminderListDetailView(reminderListItem : listItem)
+                        ReminderListDetailView(title : title)
                     } label: {
-                        ReminderListItemView(reminderListItem: listItem)
+                        TitleItemView(titleItem: title)
                         
                     }
                 }
