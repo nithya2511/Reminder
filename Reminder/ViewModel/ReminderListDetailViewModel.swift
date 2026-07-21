@@ -8,9 +8,18 @@
 import SwiftUI
 
 class ReminderListDetailViewModel: ObservableObject {
+    var title : Title
     @Published var reminders : [Reminder]
     
-    init(reminders: [Reminder]) {
-        self.reminders = reminders
+    
+    init(title : Title) {
+        self.title = title
+        self.reminders = title.reminders ?? []
+    }
+    
+    func addNewReminder() -> UUID {
+        let reminder = Reminder(text: "", info: "")
+        reminders.append(reminder)
+        return reminder.id
     }
 }

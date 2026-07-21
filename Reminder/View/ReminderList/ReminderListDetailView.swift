@@ -12,21 +12,15 @@ enum ReminderFocusedField: Hashable {
 }
 
 struct ReminderListDetailView: View {
+    @StateObject private var viewModel : ReminderListDetailViewModel
+    @FocusState private var focusedField : ReminderFocusedField?
     
-    let title : Title
+    init(title : Title) {
+        _viewModel = StateObject(
+            wrappedValue: ReminderListDetailViewModel(title: title)
+        )
+    }
     
-    //    @StateObject private var viewModel: ReminderListDetailViewModel
-    //    @FocusState private var focusedField : ReminderFocusedField?
-    //
-    //    init(title : Title) {
-    //            self.title = title
-    //
-    //            _viewModel = StateObject(
-    //                     wrappedValue: ReminderListDetailViewModel(
-    //                         reminders: reminderListItem.reminders ?? []
-    //                     )
-    //                 )
-    //    }
     var body: some View {
         
         ZStack {
@@ -36,16 +30,17 @@ struct ReminderListDetailView: View {
             ScrollView{
                 
                 LazyVStack(alignment: .leading, spacing: 16) {
-                    Text(title.title)
+                    Text(viewModel.title.title)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundStyle(title.iconColor)
+                        .foregroundStyle(viewModel.title.iconColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    if let reminders = title.reminders {
-                        ForEach(reminders) { reminder in
-                            ReminderView(reminder : reminder)
-                        }
+                    ForEach($viewModel.reminders) { $reminder in
+                        ReminderView(
+                            reminder: $reminder,
+                            focusedField: $focusedField
+                        )
                     }
                 }
                 .toolbar {
@@ -61,9 +56,13 @@ struct ReminderListDetailView: View {
                 .padding()
             }
             .overlay(alignment : .bottomTrailing) {
-                BottomBarView(onAdd: {
-                    print("Add Button Tapped")
-                })
+                BottomBarView{
+                    let newReminderID = viewModel.addNewReminder()
+                    
+                    DispatchQueue.main.async {
+                        focusedField = .title(newReminderID)
+                    }
+                }
                     .padding(.trailing, 20)
                     .padding(.bottom, 20)
                 

@@ -9,14 +9,15 @@ import SwiftUI
 
 
 struct ReminderView : View {
-    @State private var reminder : Reminder
+    @Binding var reminder : Reminder
     var shouldShowInfoButton : Bool = false
-    @State private var reminderText : String = ""
-    @State private var reminderSubText : String = ""
-//    @FocusState.Binding  var focusedField : ReminderFocusedField? = nil
+    @FocusState.Binding  var focusedField : ReminderFocusedField?
     
-    init(reminder : Reminder){
-        self.reminder = reminder
+    
+    private var shouldShowNoteTextField : Bool {
+        !reminder.info.isEmpty ||
+        focusedField == .title(reminder.id) ||
+        focusedField == .info(reminder.id)
     }
     
     var body : some View {
@@ -31,14 +32,17 @@ struct ReminderView : View {
             .font(.system(size: 28))
             //text and subtext
             VStack (alignment : .leading){
-                TextField(reminder.text, text: $reminderText)
+                TextField("New Reminder", text: $reminder.text)
                     .font(.headline)
                     .foregroundStyle(.primary)
-                if let subtext = reminder.info {
-                    TextField(subtext, text: $reminderSubText)
+                    .focused($focusedField, equals: .title(reminder.id))
+                if shouldShowNoteTextField {
+                    TextField("Add Note", text: $reminder.info)
                         .font(.subheadline)
                         .foregroundStyle(.gray)
+                        .focused($focusedField, equals: .info(reminder.id))
                 }
+                        
             }
             
             Spacer()
@@ -66,7 +70,16 @@ struct ReminderView : View {
 }
 
 
-
 #Preview {
-    ReminderView(reminder: Reminder(text: "rem 1", info: "Added by You"))
-}
+     @Previewable @State var reminder = Reminder(
+         text: "rem 1",
+         info: "Added by You"
+     )
+
+     @Previewable @FocusState var focusedField: ReminderFocusedField?
+
+     ReminderView(
+         reminder: $reminder,
+         focusedField: $focusedField
+     )
+ }

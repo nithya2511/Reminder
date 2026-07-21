@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NewListView : View {
     @ObservedObject var viewModel : CreateNewListViewModel
+    @FocusState.Binding var isListNameFocused : Bool
+    
     var body: some View {
         ScrollView{
             VStack  (alignment : .center) {
@@ -34,6 +36,7 @@ struct NewListView : View {
                 TextField("List Name", text: $viewModel.listName)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .focused($isListNameFocused)
                     .background {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(.bar)
@@ -128,5 +131,10 @@ struct IconSelectionPanelView : View {
 }
 
 #Preview {
-    NewListView(viewModel: CreateNewListViewModel())
+    
+    @Previewable @FocusState var isListNameFocused : Bool
+    NewListView(
+        viewModel: CreateNewListViewModel(),
+        isListNameFocused: $isListNameFocused
+    )
 }

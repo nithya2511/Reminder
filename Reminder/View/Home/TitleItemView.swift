@@ -49,12 +49,8 @@ struct TitleItemView: View {
                         )
                         .foregroundStyle(.gray)
                     
-                    Button{
-                        
-                    }label: {
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(.gray)
-                    }
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.gray)
                 }
                 
                 Divider()

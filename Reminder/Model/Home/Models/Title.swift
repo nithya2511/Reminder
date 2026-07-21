@@ -21,5 +21,5 @@ struct Title : Identifiable {
 struct Reminder : Identifiable {
     let id = UUID()
     var text : String
-    var info : String?
+    var info : String
 }

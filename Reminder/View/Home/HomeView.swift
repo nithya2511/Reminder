@@ -11,7 +11,7 @@ struct HomeView : View {
     @StateObject private var homeViewModel = HomeViewModel()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $homeViewModel.navigationPath) {
             ZStack{
                 AppTheme.background.ignoresSafeArea()
                 ScrollView {
@@ -24,6 +24,11 @@ struct HomeView : View {
                 }
                 .defaultPageRightPadding()
             }
+            .navigationDestination(for: UUID.self) { id in
+                if let title = homeViewModel.title(for: id) {
+                    ReminderListDetailView(title: title)
+                }
+            }
             .toolbar{
                 toolbarContent
             }
@@ -35,7 +40,7 @@ struct HomeView : View {
             .sheet(
                 isPresented: $homeViewModel.isShowingCreateNewListSheet){
                     CreateNewListView(onSave: { newList in
-                        homeViewModel.addList(named: newList)
+                        homeViewModel.addListAndOpen(named: newList)
                         
                     })
                         .presentationBackground(AppTheme.background)
@@ -83,11 +88,8 @@ struct ListView : View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             VStack {
                 ForEach(titleNames) { title in
-                    NavigationLink{
-                        ReminderListDetailView(title : title)
-                    } label: {
+                    NavigationLink(value: title.id) {
                         TitleItemView(titleItem: title)
-                        
                     }
                 }
             }

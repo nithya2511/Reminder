@@ -11,6 +11,8 @@ struct CreateNewListView: View {
     @StateObject private var viewModel = CreateNewListViewModel()
     @Environment(\.dismiss) private var dismiss
     
+    @FocusState private var isListNameFocused : Bool
+    
     let onSave : (Title) -> Void
     
     init(onSave : @escaping (Title) -> Void) {
@@ -29,7 +31,10 @@ struct CreateNewListView: View {
                     
                     switch viewModel.selectedSection {
                     case .newList:
-                        NewListView(viewModel: viewModel)
+                        NewListView(
+                            viewModel: viewModel,
+                            isListNameFocused : $isListNameFocused
+                        )
                     case .templates:
                         TemplatesView()
                     }
@@ -39,6 +44,11 @@ struct CreateNewListView: View {
             .appBackground()
             .navigationTitle("New List")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear{
+                DispatchQueue.main.async {
+                    isListNameFocused = true
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button{
