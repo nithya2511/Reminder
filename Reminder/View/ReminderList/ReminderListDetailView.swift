@@ -14,8 +14,10 @@ enum ReminderFocusedField: Hashable {
 struct ReminderListDetailView: View {
     @StateObject private var viewModel : ReminderListDetailViewModel
     @FocusState private var focusedField : ReminderFocusedField?
+    let onSave : ([Reminder]) -> Void
     
-    init(title : Title) {
+    init(title : Title, onSave: @escaping ([Reminder]) -> Void) {
+        self.onSave = onSave
         _viewModel = StateObject(
             wrappedValue: ReminderListDetailViewModel(title: title)
         )
@@ -36,17 +38,42 @@ struct ReminderListDetailView: View {
                         .foregroundStyle(viewModel.title.iconColor)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    ForEach($viewModel.reminders) { $reminder in
-                        ReminderView(
-                            reminder: $reminder,
-                            focusedField: $focusedField
-                        )
+                    if !$viewModel.reminders.isEmpty {
+                        ForEach($viewModel.reminders) { $reminder in
+                            ReminderView(
+                                reminder: $reminder,
+                                focusedField: $focusedField
+                            ) {
+                                guard !reminder.text
+                                    .trimmingCharacters(
+                                        in: .whitespacesAndNewlines)
+                                        .isEmpty else {
+                                    return
+                                }
+                                
+                                let newReminderID = viewModel.addNewReminder()
+                                DispatchQueue.main.async {
+                                    focusedField = .title(newReminderID)
+                                }
+                                
+                            }
+                        }
+                    } else {
+                        VStack {
+                            Spacer()
+                            Text("No Reminders")
+                                .foregroundStyle(.gray)
+                                .font(.headline)
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity, minHeight: 500)
+                        
                     }
                 }
                 .toolbar {
                     if #available(iOS 26.0, *) {
                         keyboardToolBar
-                        .sharedBackgroundVisibility(.hidden)
+                            .sharedBackgroundVisibility(.hidden)
                     } else {
                         // Fallback on earlier versions
                         keyboardToolBar
@@ -56,26 +83,29 @@ struct ReminderListDetailView: View {
                 .padding()
             }
             .overlay(alignment : .bottomTrailing) {
-                BottomBarView{
+                BottomBarView(tint : viewModel.title.iconColor){
                     let newReminderID = viewModel.addNewReminder()
                     
                     DispatchQueue.main.async {
                         focusedField = .title(newReminderID)
                     }
                 }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 20)
+                .padding(.trailing, 20)
+                .padding(.bottom, 20)
                 
+            }
+            .onDisappear{
+                onSave(viewModel.reminders)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup (placement : .topBarTrailing) {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "person.crop.circle.badge.checkmark")
-                }
+                //                Button {
+                //                    
+                //                } label: {
+                //                    Image(systemName: "person.crop.circle.badge.checkmark")
+                //                }
                 Button {
                 } label: {
                     Image(systemName: "square.and.arrow.up")
@@ -140,7 +170,6 @@ struct ItemRowView : View {
                 iconColor: .red,
                 iconName: "list.bullet",
                 info: "Created by Sid",
-                count: 5,
                 reminders: nil
             )
         )

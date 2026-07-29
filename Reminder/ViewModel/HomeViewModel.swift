@@ -6,14 +6,27 @@
 //
 
 import SwiftUI
+enum HomeSheet : Identifiable {
+    case createList
+    case editList(Title)
+    case createReminder
+    
+    var id : String {
+        switch self {
+        case .createList : return "createList"
+        case .editList(let title) : return "editList-\(title.id)"
+        case .createReminder : return "createReminder"
+        }
+    }
+}
+
 
 class HomeViewModel : ObservableObject {
     @Published var searchText: String = ""
     @Published private(set) var categories : [CardCategory] = []
     @Published private(set) var titleNames : [Title] = []
-    @Published var isShowingCreateNewListSheet = false
-    @Published var isShowingCreateNewReminderSheet = false
     @Published var navigationPath = NavigationPath()
+    @Published var activeSheet : HomeSheet?
     
     init() {
         loadCategories()
@@ -21,21 +34,21 @@ class HomeViewModel : ObservableObject {
     }
     
     func createNewListButtonTapped() {
-        self.isShowingCreateNewListSheet = true
+        activeSheet = .createList
     }
     
-    func closeCreateNewListSheet() {
-        self.isShowingCreateNewListSheet = false
-    }
+//    func closeCreateNewListSheet() {
+//        self.isShowingCreateNewListSheet = false
+//    }
     
     
     func onAddButtonTapped() {
-        self.isShowingCreateNewReminderSheet = true
+        activeSheet = .createReminder
     }
     
-    func closeCreateNewReminderSheet() {
-        self.isShowingCreateNewReminderSheet = false
-    }
+//    func closeCreateNewReminderSheet() {
+//        self.isShowingCreateNewReminderSheet = false
+//    }
     //TODO: These categories are hardcoded - need to fix dynamic loading of values
     func loadCategories() {
         categories = [
@@ -77,9 +90,8 @@ class HomeViewModel : ObservableObject {
             Title(
                 title: "Pantry",
                 iconColor: Color.red,
-                iconName: "list",
+                iconName: "list.bullet",
                 info: nil,
-                count: 3,
                 reminders: [
                     Reminder(text: "Item1", info: ""),
                     Reminder(text: "Item2", info: ""),
@@ -89,34 +101,30 @@ class HomeViewModel : ObservableObject {
             Title(
                 title: "Reminder",
                 iconColor: .blue,
-                iconName: "list",
+                iconName: "list.bullet",
                 info: nil,
-                count: 3,
                 reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
             ),
             Title(
                 title: "Use immediatly",
                 iconColor: .orange,
-                iconName: "list",
+                iconName: "list.bullet",
                 info: nil,
-                count: 3,
                 reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
             ),
             Title(
                 title: "Shopping List",
                 iconColor: .gray,
-                iconName: "list",
+                iconName: "list.bullet",
                 info: nil,
-                count: 3,
                 reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: ""),
                     Reminder(text: "ItemLast", info: "")]
             ),
             Title(
                 title: "Kaufland",
                 iconColor: .black,
-                iconName: "list",
+                iconName: "list.bullet",
                 info: nil,
-                count: 3,
                 reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
             )
         ]
@@ -124,12 +132,52 @@ class HomeViewModel : ObservableObject {
     
     func addListAndOpen(named title : Title) {
         titleNames.append(title)
-        isShowingCreateNewListSheet = false
+        activeSheet = nil
         navigationPath.append(title.id)
     }
     
     func title(for id: UUID) -> Title? {
         titleNames.first {$0.id == id }
+    }
+    
+    func deleteList(id : UUID) {
+        titleNames.removeAll{$0.id == id}
+    }
+    
+    func infoTapped(id : UUID) {
+        guard let title = title(for : id) else { return }
+        activeSheet = .editList(title)
+    }
+    
+    func updateList(_ updatedList : Title) {
+        guard let index = titleNames.firstIndex(where: {$0.id == updatedList.id}) else { return }
+        
+        titleNames[index] = updatedList
+        activeSheet = nil
+    }
+    
+    func updateReminders(for titleID : UUID, reminders : [Reminder]) {
+        guard let index = titleNames.firstIndex(where: {$0.id == titleID}) else {return}
+        
+        let oldTitle = titleNames[index]
+        
+        titleNames[index] = Title(
+            id: oldTitle.id,
+            title: oldTitle.title,
+            iconColor: oldTitle.iconColor,
+            info: oldTitle.info,
+            reminders: reminders
+        )
+    }
+    
+    func filterTodayReminders() {
+        let x = ForEach(titleNames){title in
+            let todayReminders = title.reminders?.filter{ reminder in
+                reminder.info != ""
+                
+            }
+            
+        }
     }
 }
 

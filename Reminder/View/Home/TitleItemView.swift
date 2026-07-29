@@ -12,7 +12,7 @@ struct TitleItemView: View {
     
     var body : some View {
         HStack{
-            Image(systemName: "list.bullet")
+            Image(systemName: titleItem.iconName)
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
                 .background{
@@ -33,30 +33,26 @@ struct TitleItemView: View {
                                     )
                             )
                             .foregroundStyle(.black)
-                        
-                        Text(titleItem.info ?? "")
-                            .foregroundStyle(.gray)
-                            .font(Font.system(size: 14, weight: .regular, design: .rounded))
+                        if(titleItem.info != "" ) {
+                            Text(titleItem.info ?? "")
+                                .foregroundStyle(.gray)
+                                .font(Font.system(size: 14, weight: .regular, design: .rounded))
+                        }
                     }
                     .padding(.leading, 5)
                     
                     Spacer()
                     
                     Text("\(titleItem.count)")
-                        .padding()
                         .font(
                             Font.system(size: 22, weight: .semibold, design: .rounded)
                         )
                         .foregroundStyle(.gray)
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(.gray)
                 }
-                
-                Divider()
             }
             
         }
+
     }
 }
 
@@ -67,7 +63,6 @@ struct TitleItemView: View {
             iconColor: .red,
             iconName: "list.bullet",
             info: "Created by Sid",
-            count: 5,
             reminders: nil
         )
     )

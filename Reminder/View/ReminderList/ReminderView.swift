@@ -13,6 +13,8 @@ struct ReminderView : View {
     var shouldShowInfoButton : Bool = false
     @FocusState.Binding  var focusedField : ReminderFocusedField?
     
+    let onSubmitReminder : () -> Void
+    
     
     private var shouldShowNoteTextField : Bool {
         !reminder.info.isEmpty ||
@@ -36,11 +38,19 @@ struct ReminderView : View {
                     .font(.headline)
                     .foregroundStyle(.primary)
                     .focused($focusedField, equals: .title(reminder.id))
+                    .submitLabel(.return)
+                    .onSubmit {
+                        onSubmitReminder()
+                    }
                 if shouldShowNoteTextField {
                     TextField("Add Note", text: $reminder.info)
                         .font(.subheadline)
                         .foregroundStyle(.gray)
                         .focused($focusedField, equals: .info(reminder.id))
+                        .submitLabel(.return)
+                        .onSubmit {
+                            onSubmitReminder()
+                        }
                 }
                         
             }
@@ -80,6 +90,6 @@ struct ReminderView : View {
 
      ReminderView(
          reminder: $reminder,
-         focusedField: $focusedField
+         focusedField: $focusedField, onSubmitReminder: {}
      )
  }

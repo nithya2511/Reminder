@@ -18,7 +18,13 @@ struct HomeView : View {
                     VStack(){
                         TileView(categories: homeViewModel.categories)
                         ListView(
-                            titleNames : homeViewModel.titleNames
+                            titleNames : homeViewModel.titleNames,
+                            onDelete : { id in
+                                homeViewModel.deleteList(id: id)
+                            },
+                            onInfo : { id in
+                                homeViewModel.infoTapped(id: id)
+                            }
                         )
                     }
                 }
@@ -26,7 +32,11 @@ struct HomeView : View {
             }
             .navigationDestination(for: UUID.self) { id in
                 if let title = homeViewModel.title(for: id) {
-                    ReminderListDetailView(title: title)
+                    ReminderListDetailView(title: title) { reminders in
+                        homeViewModel
+                            .updateReminders(for: title.id, reminders: reminders)
+                        
+                    }
                 }
             }
             .toolbar{
@@ -37,17 +47,26 @@ struct HomeView : View {
                     homeViewModel.onAddButtonTapped()
                 }
             }
-            .sheet(
-                isPresented: $homeViewModel.isShowingCreateNewListSheet){
-                    CreateNewListView(onSave: { newList in
-                        homeViewModel.addListAndOpen(named: newList)
-                        
-                    })
-                        .presentationBackground(AppTheme.background)
+            .sheet(item: $homeViewModel.activeSheet) { sheet in
+                switch sheet {
+                case .createList : CreateNewListView(onSave:{ newList in
+                    homeViewModel.addListAndOpen(named: newList)})
+                .presentationBackground(AppTheme.background)
+                    
+                case .editList(let title): CreateNewListView(title: title) { editedList in
+                    homeViewModel.updateList(editedList)
                 }
-            .sheet(isPresented: $homeViewModel.isShowingCreateNewReminderSheet) {
-                CreateNewReminderView(titleNames: homeViewModel.titleNames)
+                .presentationBackground(AppTheme.background)
+                    
+                case .createReminder: CreateNewReminderView(
+                    titleNames: homeViewModel
+                        .titleNames)
+                }
             }
+
+//            .sheet(isPresented: $homeViewModel.isShowingCreateNewReminderSheet) {
+//                CreateNewReminderView(titleNames: homeViewModel.titleNames)
+//            }
         }
     }
     
@@ -81,18 +100,36 @@ struct HomeView : View {
 
 struct ListView : View {
     let titleNames : [Title]
+    let onDelete : (UUID) -> Void
+    let onInfo : (UUID) -> Void
+    
     var body : some View {
         VStack {
             Text("My Lists")
                 .font(Font.system(size: 26, weight: .bold, design: .rounded))
                 .frame(maxWidth: .infinity, alignment: .leading)
-            VStack {
+            List {
                 ForEach(titleNames) { title in
                     NavigationLink(value: title.id) {
                         TitleItemView(titleItem: title)
                     }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role:.destructive) {
+                                onDelete(title.id)
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            Button {
+                                     onInfo(title.id)
+                                 } label: {
+                                     Image(systemName: "info.circle")
+                                 }
+                    }
                 }
             }
+            .listStyle(.plain)
+            .frame(height: CGFloat(titleNames.count) * 70)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
             .background{
                 RoundedRectangle(cornerRadius: 10)

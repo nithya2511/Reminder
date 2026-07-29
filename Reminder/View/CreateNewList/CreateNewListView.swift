@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct CreateNewListView: View {
-    @StateObject private var viewModel = CreateNewListViewModel()
+    @StateObject private var viewModel : CreateNewListViewModel
     @Environment(\.dismiss) private var dismiss
-    
     @FocusState private var isListNameFocused : Bool
     
     let onSave : (Title) -> Void
     
-    init(onSave : @escaping (Title) -> Void) {
+    init(title: Title? = nil,
+         onSave : @escaping (Title) -> Void) {
+        _viewModel = StateObject(
+            wrappedValue: CreateNewListViewModel(title: title)
+        )
         self.onSave = onSave
     }
     

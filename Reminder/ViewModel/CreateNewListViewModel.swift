@@ -55,6 +55,26 @@ enum ListColor : String, CaseIterable, Identifiable {
     }
 }
 
+extension ListColor {
+    static func from(color: Color) -> ListColor {
+        switch color {
+        case .red: return .red
+        case .yellow: return .yellow
+        case .green: return .green
+        case .pink: return .pink
+        case .orange: return .orange
+        case .black: return .black
+        case .gray: return .gray
+        case .teal: return .teal
+        case .purple: return .purple
+        case .brown: return .brown
+        case .blue: return .blue
+        case .indigo: return .indigo
+        default: return .blue
+        }
+    }
+}
+
 enum ListIcon : String, CaseIterable, Identifiable {
     case list = "list.bullet"
     case checklist = "checklist"
@@ -99,6 +119,16 @@ class CreateNewListViewModel : ObservableObject {
     @Published var selectedListType : ListType = .standard
     @Published var selectedColor : ListColor = .blue
     @Published var selectedIcon : ListIcon = .list
+    private let existingID : UUID?
+    
+    init(title : Title? = nil) {
+        self.existingID = title?.id
+        if let title {
+            self.listName = title.title
+            self.selectedIcon = ListIcon(rawValue: title.iconName) ?? .list
+            self.selectedColor = ListColor.from(color: title.iconColor)
+        }
+    }
     
     func listTypeRowTapped() {
         
@@ -114,11 +144,11 @@ class CreateNewListViewModel : ObservableObject {
         guard !trimmedName.isEmpty else { return nil }
         
         return Title(
+            id: existingID ?? UUID(),
             title: trimmedName,
             iconColor: selectedColor.color,
             iconName: selectedIcon.rawValue,
             info: nil,
-            count: 0,
             reminders: []
         )
     }

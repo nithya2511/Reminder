@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct BottomBarView: View {
+    var tint : Color = .blue
     let onAdd : () -> Void
     
     var body: some View {
@@ -21,7 +22,7 @@ struct BottomBarView: View {
             .frame(width: 50, height : 50)
             .background{
                 Circle()
-                    .fill(Color.blue)
+                    .fill(tint)
             }
             .padding([.trailing, .bottom], 20)
             
