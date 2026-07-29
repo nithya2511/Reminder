@@ -67,6 +67,13 @@ class CreateNewReminderViewModel: ObservableObject {
         self.selectedListName = titles.first?.title ?? ""
     }
     
+    var hasUnsavedChanges : Bool {
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+        !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+        !url.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+        isDateEnabled || isTimeEnabled || isUrgent || repeatOption != .never
+    }
+    
     
     func dateRowTapped() {
         guard isDateEnabled else {return}

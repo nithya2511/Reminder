@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CreateNewReminderView: View {
     @StateObject private var viewModel : CreateNewReminderViewModel
+    @Environment(\.dismiss) var dismiss
+    @State private var isShowingDiscardConfirmation = false
     
     init(titleNames : [Title]){
         _viewModel = StateObject(
@@ -19,9 +21,8 @@ struct CreateNewReminderView: View {
     }
     var body: some View {
         NavigationStack {
-            
             VStack (spacing : 30){
-                NotesSection()
+                NotesSection(viewModel: viewModel)
                 ScheduleSection(viewModel: viewModel)
                 if (viewModel.isDateEnabled || viewModel.isTimeEnabled){
                     RepeatSection(viewModel: viewModel)
@@ -51,8 +52,22 @@ struct CreateNewReminderView: View {
                 
                 ToolbarItem(placement: .topBarLeading) {
                     Button{
+                        if viewModel.hasUnsavedChanges {
+                            isShowingDiscardConfirmation = true
+                        } else {
+                            dismiss()
+                        }
                     } label: {
                         Image(systemName: "x.circle")
+                    }
+                    .confirmationDialog(
+                        "Are you sure you want to Discard the new reminder?",
+                        isPresented: $isShowingDiscardConfirmation,
+                        titleVisibility: .visible
+                    ){
+                        Button("Discard Changes", role: .destructive){
+                            dismiss()
+                        }
                     }
                 }
             }
@@ -62,16 +77,14 @@ struct CreateNewReminderView: View {
 }
 
 struct NotesSection : View {
-    @State private var title: String = ""
-    @State private var notes : String = ""
-    @State private var url : String = ""
+    @ObservedObject var viewModel : CreateNewReminderViewModel
     
     var body: some View {
         VStack (spacing: 20) {
-            TextField("Title", text: $title)
-            TextField("Notes", text: $notes)
+            TextField("Title", text: $viewModel.title)
+            TextField("Notes", text: $viewModel.notes)
             Divider()
-            TextField("URL", text: $url)
+            TextField("URL", text: $viewModel.url)
         }
         .padding()
         .background {
@@ -83,7 +96,6 @@ struct NotesSection : View {
 
 struct ScheduleSection : View {
     @ObservedObject var viewModel : CreateNewReminderViewModel
-    
     
     var body: some View {
         VStack(alignment : .leading) {
