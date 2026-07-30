@@ -17,7 +17,7 @@ struct ReminderView : View {
     
     
     private var shouldShowNoteTextField : Bool {
-        !reminder.info.isEmpty ||
+        !reminder.notes.isEmpty ||
         focusedField == .title(reminder.id) ||
         focusedField == .info(reminder.id)
     }
@@ -34,7 +34,7 @@ struct ReminderView : View {
             .font(.system(size: 28))
             //text and subtext
             VStack (alignment : .leading){
-                TextField("New Reminder", text: $reminder.text)
+                TextField("New Reminder", text: $reminder.title)
                     .font(.headline)
                     .foregroundStyle(.primary)
                     .focused($focusedField, equals: .title(reminder.id))
@@ -43,7 +43,7 @@ struct ReminderView : View {
                         onSubmitReminder()
                     }
                 if shouldShowNoteTextField {
-                    TextField("Add Note", text: $reminder.info)
+                    TextField("Add Note", text: $reminder.notes)
                         .font(.subheadline)
                         .foregroundStyle(.gray)
                         .focused($focusedField, equals: .info(reminder.id))
@@ -82,8 +82,8 @@ struct ReminderView : View {
 
 #Preview {
      @Previewable @State var reminder = Reminder(
-         text: "rem 1",
-         info: "Added by You"
+         title: "rem 1",
+         notes: "Added by You"
      )
 
      @Previewable @FocusState var focusedField: ReminderFocusedField?

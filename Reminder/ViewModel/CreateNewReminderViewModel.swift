@@ -146,6 +146,21 @@ class CreateNewReminderViewModel: ObservableObject {
     func closeDetailInfoSheet() {
         isShowingDetailInfoSheet = false
     }
+    
+    func makeReminder() -> Reminder? {
+        return Reminder(
+            id: UUID(),
+            title: title,
+            notes: notes,
+            url: url,
+            date: selectedDate,
+            time: selectedTime,
+            repeatOption: repeatOption,
+            isUrgent: isUrgent,
+            list: selectedListName,
+            details: ""
+        )
+    }
    
     
 

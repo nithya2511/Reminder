@@ -60,7 +60,10 @@ struct HomeView : View {
                     
                 case .createReminder: CreateNewReminderView(
                     titleNames: homeViewModel
-                        .titleNames)
+                        .titleNames) {
+                            reminder in
+                            homeViewModel.addReminder(reminder)
+                        }
                 }
             }
 

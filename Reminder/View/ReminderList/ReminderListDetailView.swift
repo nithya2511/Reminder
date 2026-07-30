@@ -44,7 +44,7 @@ struct ReminderListDetailView: View {
                                 reminder: $reminder,
                                 focusedField: $focusedField
                             ) {
-                                guard !reminder.text
+                                guard !reminder.title
                                     .trimmingCharacters(
                                         in: .whitespacesAndNewlines)
                                         .isEmpty else {
@@ -121,7 +121,7 @@ struct ReminderListDetailView: View {
                 Button{
                     
                 }label: {
-                    Image(systemName: "checkm")
+                    Image(systemName: "checkmark")
                 }
             }
         }

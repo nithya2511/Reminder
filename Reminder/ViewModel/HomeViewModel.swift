@@ -93,9 +93,9 @@ class HomeViewModel : ObservableObject {
                 iconName: "list.bullet",
                 info: nil,
                 reminders: [
-                    Reminder(text: "Item1", info: ""),
-                    Reminder(text: "Item2", info: ""),
-                    Reminder(text: "Item3", info: "")
+                    Reminder(title: "Item1", notes: ""),
+                    Reminder(title: "Item2", notes: ""),
+                    Reminder(title: "Item3", notes: "")
                 ]
             ),
             Title(
@@ -103,29 +103,48 @@ class HomeViewModel : ObservableObject {
                 iconColor: .blue,
                 iconName: "list.bullet",
                 info: nil,
-                reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
+                reminders: [
+                    Reminder(title: "Item1", notes: ""),
+                    Reminder(title: "Item2", notes: ""),
+                    Reminder(title: "Item3", notes: "")
+                ]
             ),
             Title(
                 title: "Use immediatly",
                 iconColor: .orange,
                 iconName: "list.bullet",
                 info: nil,
-                reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
+                reminders: [
+                    Reminder(title: "Item1", notes: ""),
+                    Reminder(title: "Item2", notes: ""),
+                    Reminder(title: "Item3", notes: "")
+                ]
             ),
             Title(
                 title: "Shopping List",
                 iconColor: .gray,
                 iconName: "list.bullet",
                 info: nil,
-                reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: ""),
-                    Reminder(text: "ItemLast", info: "")]
+                reminders: [
+                    Reminder(title: "Item1", notes: ""),
+                    Reminder(title: "Item2", notes: ""),
+                    Reminder(
+                        title: "Item3",
+                        notes: ""
+                    ),
+                    Reminder(title: "ItemLast", notes: "")
+]
             ),
             Title(
                 title: "Kaufland",
                 iconColor: .black,
                 iconName: "list.bullet",
                 info: nil,
-                reminders: [Reminder(text: "Item1", info: ""), Reminder(text: "Item2", info: ""), Reminder(text: "Item3", info: "")]
+                reminders: [
+                    Reminder(title: "Item1", notes: ""),
+                    Reminder(title: "Item2", notes: ""),
+                    Reminder(title: "Item3", notes: "")
+                ]
             )
         ]
     }
@@ -170,10 +189,30 @@ class HomeViewModel : ObservableObject {
         )
     }
     
+    func addReminder(_ reminder : Reminder) {
+        guard let index = titleNames.firstIndex(
+            where: {$0.title == reminder.list
+            }) else { return }
+        
+        let oldTitle = titleNames[index]
+        var reminders = oldTitle.reminders ?? []
+        reminders.append(reminder)
+        
+        titleNames[index] = Title(
+            id: oldTitle.id,
+            title: oldTitle.title,
+            iconColor: oldTitle.iconColor,
+            iconName: oldTitle.iconName,
+            info: oldTitle.info,
+            reminders: reminders
+        )
+        activeSheet = nil 
+    }
+    
     func filterTodayReminders() {
         let x = ForEach(titleNames){title in
             let todayReminders = title.reminders?.filter{ reminder in
-                reminder.info != ""
+                reminder.notes != ""
                 
             }
             

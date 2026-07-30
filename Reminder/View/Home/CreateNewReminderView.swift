@@ -12,11 +12,15 @@ struct CreateNewReminderView: View {
     @Environment(\.dismiss) var dismiss
     @State private var isShowingDiscardConfirmation = false
     
-    init(titleNames : [Title]){
+    let onSave : (Reminder) -> Void
+    
+    init(titleNames : [Title], onSave : @escaping (Reminder) -> Void){
+        
         _viewModel = StateObject(
             wrappedValue: CreateNewReminderViewModel(titles:
                       titleNames)
                   )
+        self.onSave = onSave
 
     }
     var body: some View {
@@ -45,9 +49,13 @@ struct CreateNewReminderView: View {
             .toolbar {
                 ToolbarItem (placement : .topBarTrailing) {
                     Button{
+                        guard let reminder = viewModel.makeReminder() else { return }
+                        onSave(reminder)
+                        dismiss()
                     } label: {
                         Image(systemName: "checkmark")
                     }
+                    .disabled(!viewModel.hasUnsavedChanges)
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
@@ -268,7 +276,9 @@ struct MoreOptionsSection : View {
 
 #Preview {
     CreateNewReminderView(
-             titleNames: HomeViewModel().titleNames
-         )
+        titleNames: HomeViewModel().titleNames) {
+            reminder in
+            print(reminder)
+        }
 }
     

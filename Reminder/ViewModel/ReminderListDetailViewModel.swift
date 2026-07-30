@@ -18,7 +18,7 @@ class ReminderListDetailViewModel: ObservableObject {
     }
     
     func addNewReminder() -> UUID {
-        let reminder = Reminder(text: "", info: "")
+        let reminder = Reminder(title : "", notes: "")
         reminders.append(reminder)
         return reminder.id
     }
