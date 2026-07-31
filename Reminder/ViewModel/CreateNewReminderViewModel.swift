@@ -148,13 +148,15 @@ class CreateNewReminderViewModel: ObservableObject {
     }
     
     func makeReminder() -> Reminder? {
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else { return nil}
         return Reminder(
             id: UUID(),
-            title: title,
+            title: trimmedTitle,
             notes: notes,
             url: url,
-            date: selectedDate,
-            time: selectedTime,
+            date: isDateEnabled ? selectedDate : nil,
+            time: isTimeEnabled ? selectedTime : nil,
             repeatOption: repeatOption,
             isUrgent: isUrgent,
             list: selectedListName,

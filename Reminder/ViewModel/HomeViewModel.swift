@@ -23,67 +23,98 @@ enum HomeSheet : Identifiable {
 
 class HomeViewModel : ObservableObject {
     @Published var searchText: String = ""
-    @Published private(set) var categories : [CardCategory] = []
     @Published private(set) var titleNames : [Title] = []
     @Published var navigationPath = NavigationPath()
     @Published var activeSheet : HomeSheet?
     
+    private var allReminders : [Reminder] {
+        titleNames.flatMap { title in
+            title.reminders ?? []
+        }
+    }
+    
+    var categories : [CardCategory] {
+        ReminderCategory.allCases.map { category in
+            CardCategory(
+                category: category,
+                reminderCount: count(for : category)
+            )
+        }
+    }
+    
+    private func count(for category : ReminderCategory) -> Int {
+        switch category {
+        case .today  : return allReminders.filter { reminder in
+            guard let date = reminder.date else { return false }
+            return Calendar.current.isDateInToday(date)
+        }.count
+        case .scheduled : return allReminders.filter { reminder in
+            reminder.date != nil || reminder.time != nil
+        }.count
+        
+        case .flagged : return allReminders.filter { reminder in
+            reminder.isUrgent
+        }.count
+            
+        case .completed : return allReminders.filter { $0.isCompleted }.count
+            
+        case .all : return allReminders.count
+        }
+    }
+    
     init() {
-        loadCategories()
         loadTitleNames()
     }
+    
+    
     
     func createNewListButtonTapped() {
         activeSheet = .createList
     }
     
-//    func closeCreateNewListSheet() {
-//        self.isShowingCreateNewListSheet = false
-//    }
+
     
     
     func onAddButtonTapped() {
         activeSheet = .createReminder
     }
     
-//    func closeCreateNewReminderSheet() {
-//        self.isShowingCreateNewReminderSheet = false
-//    }
+
     //TODO: These categories are hardcoded - need to fix dynamic loading of values
-    func loadCategories() {
-        categories = [
-            CardCategory(
-                cardTitle: "Today",
-                iconName: "calendar",
-                iconColor: .blue,
-                reminderCount: 1
-            ),
-            CardCategory(
-                cardTitle: "Scheduled",
-                iconName: "calendar.badge.clock",
-                iconColor:.red,
-                reminderCount: 1
-            ),
-            CardCategory(
-                cardTitle: "Flagged",
-                iconName: "flag.fill",
-                iconColor:.orange,
-                reminderCount: 1
-            ),
-            CardCategory(
-                cardTitle: "Completed",
-                iconName: "checkmark.circle",
-                iconColor:.gray,
-                reminderCount: 1
-            ),
-            CardCategory(
-                cardTitle: "All",
-                iconName: "tray.full.fill",
-                iconColor:.black,
-                reminderCount: 1
-            )
-        ]
-    }
+//    func loadCategories() {
+//        categories = [
+//            CardCategory(
+//                cardTitle: "Today",
+//                iconName: "calendar",
+//                iconColor: .blue,
+//                reminderCount: 1
+//            ),
+//            CardCategory(
+//                cardTitle: "Scheduled",
+//                iconName: "calendar.badge.clock",
+//                iconColor:.red,
+//                reminderCount: 1
+//            ),
+//            CardCategory(
+//                cardTitle: "Flagged",
+//                iconName: "flag.fill",
+//                iconColor:.orange,
+//                reminderCount: 1
+//            ),
+//            CardCategory(
+//                cardTitle: "Completed",
+//                iconName: "checkmark.circle",
+//                iconColor:.gray,
+//                reminderCount: 1
+//            ),
+//            CardCategory(
+//                cardTitle: "All",
+//                iconName: "tray.full.fill",
+//                iconColor:.black,
+//                reminderCount: 1
+//            )
+//        ]
+//    }
     
     func loadTitleNames() {
         titleNames  = [
@@ -184,6 +215,7 @@ class HomeViewModel : ObservableObject {
             id: oldTitle.id,
             title: oldTitle.title,
             iconColor: oldTitle.iconColor,
+            iconName: oldTitle.iconName,
             info: oldTitle.info,
             reminders: reminders
         )
@@ -207,16 +239,6 @@ class HomeViewModel : ObservableObject {
             reminders: reminders
         )
         activeSheet = nil 
-    }
-    
-    func filterTodayReminders() {
-        let x = ForEach(titleNames){title in
-            let todayReminders = title.reminders?.filter{ reminder in
-                reminder.notes != ""
-                
-            }
-            
-        }
     }
 }
 
