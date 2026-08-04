@@ -7,11 +7,17 @@
 
 import SwiftUI
 
+struct InfoPart {
+    let text : String
+    let color : Color 
+}
+
 
 struct ReminderView : View {
     @Binding var reminder : Reminder
     var shouldShowInfoButton : Bool = false
     @FocusState.Binding  var focusedField : ReminderFocusedField?
+    let infoParts : [InfoPart]
     
     let onSubmitReminder : () -> Void
     
@@ -23,25 +29,48 @@ struct ReminderView : View {
     }
     
     var body : some View {
-        HStack (spacing : 10){
-            //radio button
+        HStack (alignment : .top, spacing : 10){
+            
             Button{
                 
             }label: {
                 Image(systemName: "circle")
             }
             .foregroundStyle(.gray)
-            .font(.system(size: 28))
-            //text and subtext
+            .font(.system(size: 26))
+            
             VStack (alignment : .leading){
-                TextField("New Reminder", text: $reminder.title)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                    .focused($focusedField, equals: .title(reminder.id))
-                    .submitLabel(.return)
-                    .onSubmit {
-                        onSubmitReminder()
+                HStack {
+                    Text("!!!")
+                        .foregroundStyle(.orange)
+                    TextField("New Reminder", text: $reminder.title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .focused($focusedField, equals: .title(reminder.id))
+                        .submitLabel(.return)
+                        .onSubmit {
+                            onSubmitReminder()
+                        }
+                    Spacer()
+                    HStack (spacing: 20) {
+                        Button{
+                            
+                        } label : {
+                            Image(systemName : "flag.fill")
+                        }
+                        .foregroundStyle(.orange)
+                        
+                        //                    if shouldShowInfoButton {
+                        Button{
+                            
+                        } label: {
+                            Image(systemName: "info.circle")
+                        }
+                        .foregroundStyle(.orange)
+                        //                    }
                     }
+                }
+                
                 if shouldShowNoteTextField {
                     TextField("Add Note", text: $reminder.notes)
                         .font(.subheadline)
@@ -52,30 +81,33 @@ struct ReminderView : View {
                             onSubmitReminder()
                         }
                 }
+                if !infoParts.isEmpty {
+                    Text(buildInfoText(from: infoParts))
+                        .font(.caption)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                         
             }
             
             Spacer()
             
             HStack(spacing : 24) {
-                Button{
-                    
-                } label : {
-                    Image(systemName : "flag.fill")
-                }
-                .foregroundStyle(.orange)
-                
-                if shouldShowInfoButton {
-                    Button{
-                        
-                    } label: {
-                        Image(systemName: "info.circle")
-                    }
-                }
+               
             }
             //flag
             //info icon
         }
+    }
+    
+    private func buildInfoText(from parts : [InfoPart]) -> AttributedString {
+        var result = AttributedString()
+        for part in parts {
+            var attributedPart = AttributedString(part.text)
+            attributedPart.foregroundColor = part.color
+            result.append(attributedPart)
+        }
+        return result
     }
 }
 
@@ -90,6 +122,6 @@ struct ReminderView : View {
 
      ReminderView(
          reminder: $reminder,
-         focusedField: $focusedField, onSubmitReminder: {}
+         focusedField: $focusedField, infoParts: [], onSubmitReminder: {}
      )
  }

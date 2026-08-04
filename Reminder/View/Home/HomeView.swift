@@ -24,6 +24,8 @@ struct HomeView : View {
                             },
                             onInfo : { id in
                                 homeViewModel.infoTapped(id: id)
+                            }, onPin : { id in
+                                homeViewModel.pinList(id : id)
                             }
                         )
                     }
@@ -105,6 +107,7 @@ struct ListView : View {
     let titleNames : [Title]
     let onDelete : (UUID) -> Void
     let onInfo : (UUID) -> Void
+    let onPin : (UUID) -> Void
     
     var body : some View {
         VStack {
@@ -117,16 +120,24 @@ struct ListView : View {
                         TitleItemView(titleItem: title)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role:.destructive) {
-                                onDelete(title.id)
-                            } label: {
-                                Image(systemName: "trash")
-                            }
-                            Button {
-                                     onInfo(title.id)
-                                 } label: {
-                                     Image(systemName: "info.circle")
-                                 }
+                        Button(role:.destructive) {
+                            onDelete(title.id)
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                        Button {
+                            onInfo(title.id)
+                        } label: {
+                            Image(systemName: "info.circle")
+                        }
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button{
+                            onPin(title.id)
+                        } label: {
+                            Image(systemName: "pin")
+                        }
+                        .tint(.yellow)
                     }
                 }
             }

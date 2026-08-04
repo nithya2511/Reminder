@@ -22,4 +22,46 @@ class ReminderListDetailViewModel: ObservableObject {
         reminders.append(reminder)
         return reminder.id
     }
+    
+    func infoParts(for reminder : Reminder) -> [InfoPart] {
+        var parts : [InfoPart] = []
+        
+        if let date = reminder.date {
+            parts.append(
+                    InfoPart(
+                        text: date
+                            .formatted(date: .abbreviated, time: .omitted),
+                        color: .red
+                    )
+                )
+            
+            if let time = reminder.time {
+                parts.append(
+                    InfoPart(
+                        text: time.formatted(date: .omitted, time: .shortened),
+                        color: .red
+                    )
+                )
+            }
+            
+            if reminder.repeatOption != .never {
+                parts.append(InfoPart(text: "􀊞", color: .red))
+                parts
+                    .append(
+                        InfoPart(
+                            text: reminder.repeatOption.rawValue,
+                            color: .red
+                        )
+                    )
+            }
+            
+            if reminder.isUrgent {
+                parts.append(InfoPart(text: "􀐭", color: .gray))
+            }
+            
+           
+        }
+        
+        return parts
+    }
 }

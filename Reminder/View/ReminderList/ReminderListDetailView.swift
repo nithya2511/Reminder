@@ -42,7 +42,8 @@ struct ReminderListDetailView: View {
                         ForEach($viewModel.reminders) { $reminder in
                             ReminderView(
                                 reminder: $reminder,
-                                focusedField: $focusedField
+                                focusedField: $focusedField,
+                                infoParts: viewModel.infoParts(for : reminder)
                             ) {
                                 guard !reminder.title
                                     .trimmingCharacters(

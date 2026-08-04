@@ -12,6 +12,7 @@ enum ReminderCategory : String, Identifiable, CaseIterable {
     case flagged = "Flagged"
     case completed = "Completed"
     case all = "All"
+    case pinned = "Pinned"
     
     var id : Self { self }
     
@@ -22,6 +23,7 @@ enum ReminderCategory : String, Identifiable, CaseIterable {
         case .flagged : return "flag.fill"
         case .completed: return "checkmark.circle"
         case .all: return "tray.full.fill"
+        case .pinned : return "list.bullet"
         }
     }
     
@@ -32,19 +34,32 @@ enum ReminderCategory : String, Identifiable, CaseIterable {
         case .flagged: return .orange
         case .completed: return .gray
         case .all: return .black
+        case .pinned : return .blue
         }
 
     }
 }
 
 struct CardCategory : Identifiable {
+    let id : UUID
     let category : ReminderCategory
     let reminderCount : Int
+    let customPinnedTitle : String?
     
-    var id : ReminderCategory {category}
+    init(
+        id : UUID = UUID(),
+        category: ReminderCategory,
+        reminderCount: Int,
+        customPinnedTitle: String? = nil
+    ) {
+        self.id = id
+        self.category = category
+        self.reminderCount = reminderCount
+        self.customPinnedTitle = customPinnedTitle
+    }
 
     var cardTitle : String {
-        category.rawValue
+        customPinnedTitle ?? category.rawValue
     }
     var iconName : String {
         category.iconName

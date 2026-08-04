@@ -15,6 +15,7 @@ struct Title : Identifiable {
     let iconName : String
     let info : String?
     let reminders : [Reminder]?
+    let isPinned : Bool
     
     var count : Int {
         reminders?.count ?? 0
@@ -26,7 +27,8 @@ struct Title : Identifiable {
         iconColor: Color,
         iconName: String = "list.bullet",
         info: String?,
-        reminders: [Reminder]?
+        reminders: [Reminder]?,
+        isPinned : Bool = false
     ) {
         self.id = id
         self.title = title
@@ -34,6 +36,7 @@ struct Title : Identifiable {
         self.iconName = iconName
         self.info = info
         self.reminders = reminders
+        self.isPinned = isPinned
     }
 }
 

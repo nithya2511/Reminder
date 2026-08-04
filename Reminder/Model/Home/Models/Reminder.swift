@@ -18,6 +18,7 @@ struct Reminder : Identifiable {
     var list : String
     var details : String?
     var isCompleted : Bool
+    var tags : [String]?
     
     init(
         id : UUID = UUID(),
@@ -30,7 +31,8 @@ struct Reminder : Identifiable {
         isUrgent: Bool = false,
         list: String = "",
         details: String = "",
-        isCompleted : Bool = false
+        isCompleted : Bool = false,
+        tags : [String]? = nil
     ) {
         self.id = id
         self.title = title
@@ -43,5 +45,6 @@ struct Reminder : Identifiable {
         self.list = list
         self.isCompleted = isCompleted
         self.details = details
+        self.tags = tags
     }
 }

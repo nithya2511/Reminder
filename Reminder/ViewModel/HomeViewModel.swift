@@ -33,13 +33,8 @@ class HomeViewModel : ObservableObject {
         }
     }
     
-    var categories : [CardCategory] {
-        ReminderCategory.allCases.map { category in
-            CardCategory(
-                category: category,
-                reminderCount: count(for : category)
-            )
-        }
+    init() {
+        loadTitleNames()
     }
     
     private func count(for category : ReminderCategory) -> Int {
@@ -59,12 +54,35 @@ class HomeViewModel : ObservableObject {
         case .completed : return allReminders.filter { $0.isCompleted }.count
             
         case .all : return allReminders.count
+            
+        case .pinned : return 0
         }
     }
     
-    init() {
-        loadTitleNames()
+    var categories : [CardCategory]  {
+        var cards = ReminderCategory.allCases
+            .filter {$0 != .pinned}
+            .map { category in
+                CardCategory(
+                    category: category,
+                    reminderCount: count(for: category)
+                )
+            }
+        
+        let pinnedCards = titleNames
+            .filter{ $0.isPinned }
+            .map{ title in
+                CardCategory(
+                    category: .pinned,
+                    reminderCount: title.count,customPinnedTitle: title.title
+                )
+            }
+        
+        cards.append(contentsOf : pinnedCards)
+        
+        return cards
     }
+
     
     
     
@@ -78,43 +96,6 @@ class HomeViewModel : ObservableObject {
     func onAddButtonTapped() {
         activeSheet = .createReminder
     }
-    
-
-    //TODO: These categories are hardcoded - need to fix dynamic loading of values
-//    func loadCategories() {
-//        categories = [
-//            CardCategory(
-//                cardTitle: "Today",
-//                iconName: "calendar",
-//                iconColor: .blue,
-//                reminderCount: 1
-//            ),
-//            CardCategory(
-//                cardTitle: "Scheduled",
-//                iconName: "calendar.badge.clock",
-//                iconColor:.red,
-//                reminderCount: 1
-//            ),
-//            CardCategory(
-//                cardTitle: "Flagged",
-//                iconName: "flag.fill",
-//                iconColor:.orange,
-//                reminderCount: 1
-//            ),
-//            CardCategory(
-//                cardTitle: "Completed",
-//                iconName: "checkmark.circle",
-//                iconColor:.gray,
-//                reminderCount: 1
-//            ),
-//            CardCategory(
-//                cardTitle: "All",
-//                iconName: "tray.full.fill",
-//                iconColor:.black,
-//                reminderCount: 1
-//            )
-//        ]
-//    }
     
     func loadTitleNames() {
         titleNames  = [
@@ -197,6 +178,20 @@ class HomeViewModel : ObservableObject {
     func infoTapped(id : UUID) {
         guard let title = title(for : id) else { return }
         activeSheet = .editList(title)
+    }
+    
+    func pinList(id : UUID) {
+        guard let index = titleNames.firstIndex(where: {$0.id == id }) else { return }
+        let oldTitle = titleNames[index]
+        titleNames[index] = Title(
+            id : oldTitle.id,
+            title: oldTitle.title,
+            iconColor: oldTitle.iconColor,
+            iconName: oldTitle.iconName,
+            info: oldTitle.info,
+            reminders: oldTitle.reminders,
+            isPinned: !oldTitle.isPinned
+        )
     }
     
     func updateList(_ updatedList : Title) {
