@@ -111,44 +111,46 @@ struct ListView : View {
     
     var body : some View {
         VStack {
-            Text("My Lists")
-                .font(Font.system(size: 26, weight: .bold, design: .rounded))
-                .frame(maxWidth: .infinity, alignment: .leading)
-            List {
-                ForEach(titleNames) { title in
-                    NavigationLink(value: title.id) {
-                        TitleItemView(titleItem: title)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role:.destructive) {
-                            onDelete(title.id)
-                        } label: {
-                            Image(systemName: "trash")
+            if (!titleNames.isEmpty) {
+                Text("My Lists")
+                    .font(Font.system(size: 26, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                List {
+                    ForEach(titleNames) { title in
+                        NavigationLink(value: title.id) {
+                            TitleItemView(titleItem: title)
                         }
-                        Button {
-                            onInfo(title.id)
-                        } label: {
-                            Image(systemName: "info.circle")
+                        .listRowInsets(
+                                     EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10)
+                                 )
+    //                    .background(.black)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role:.destructive) {
+                                onDelete(title.id)
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            Button {
+                                onInfo(title.id)
+                            } label: {
+                                Image(systemName: "info.circle")
+                            }
                         }
-                    }
-                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                        Button{
-                            onPin(title.id)
-                        } label: {
-                            Image(systemName: "pin")
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button{
+                                onPin(title.id)
+                            } label: {
+                                Image(systemName: "pin")
+                            }
+                            .tint(.yellow)
                         }
-                        .tint(.yellow)
                     }
                 }
+                .listStyle(.plain)
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .frame(height: CGFloat(titleNames.count) * 60)
             }
-            .listStyle(.plain)
-            .frame(height: CGFloat(titleNames.count) * 70)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
-            .background{
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(.white)
-            }
+            
         }
         
     }

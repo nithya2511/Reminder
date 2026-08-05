@@ -21,7 +21,7 @@ enum ListType : String, CaseIterable, Identifiable {
     var id : Self {self}
 }
 
-enum ListColor : String, CaseIterable, Identifiable {
+enum ListColor : String, CaseIterable, Identifiable, Codable {
     case red
     case yellow
     case green
@@ -126,7 +126,7 @@ class CreateNewListViewModel : ObservableObject {
         if let title {
             self.listName = title.title
             self.selectedIcon = ListIcon(rawValue: title.iconName) ?? .list
-            self.selectedColor = ListColor.from(color: title.iconColor)
+            self.selectedColor = title.iconColor
         }
     }
     
@@ -146,7 +146,7 @@ class CreateNewListViewModel : ObservableObject {
         return Title(
             id: existingID ?? UUID(),
             title: trimmedName,
-            iconColor: selectedColor.color,
+            iconColor: selectedColor,
             iconName: selectedIcon.rawValue,
             info: nil,
             reminders: []

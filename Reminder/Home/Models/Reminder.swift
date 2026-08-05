@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct Reminder : Identifiable {
+struct Reminder : Identifiable, Codable {
     let id : UUID
     var title : String
     var notes : String
@@ -15,7 +15,7 @@ struct Reminder : Identifiable {
     var time : Date?
     var repeatOption : RepeatOption
     var isUrgent : Bool
-    var list : String
+    var listID : UUID?
     var details : String?
     var isCompleted : Bool
     var tags : [String]?
@@ -29,7 +29,7 @@ struct Reminder : Identifiable {
         time: Date? = nil,
         repeatOption : RepeatOption = .never,
         isUrgent: Bool = false,
-        list: String = "",
+        listID: UUID? = nil,
         details: String = "",
         isCompleted : Bool = false,
         tags : [String]? = nil
@@ -42,7 +42,7 @@ struct Reminder : Identifiable {
         self.time = time
         self.repeatOption = repeatOption
         self.isUrgent = isUrgent
-        self.list = list
+        self.listID = listID
         self.isCompleted = isCompleted
         self.details = details
         self.tags = tags

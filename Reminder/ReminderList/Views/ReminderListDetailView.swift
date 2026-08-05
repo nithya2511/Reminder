@@ -35,7 +35,7 @@ struct ReminderListDetailView: View {
                     Text(viewModel.title.title)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundStyle(viewModel.title.iconColor)
+                        .foregroundStyle(viewModel.title.iconColor.color)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     if !$viewModel.reminders.isEmpty {
@@ -84,7 +84,7 @@ struct ReminderListDetailView: View {
                 .padding()
             }
             .overlay(alignment : .bottomTrailing) {
-                BottomBarView(tint : viewModel.title.iconColor){
+                BottomBarView(tint : viewModel.title.iconColor.color){
                     let newReminderID = viewModel.addNewReminder()
                     
                     DispatchQueue.main.async {
@@ -171,7 +171,7 @@ struct ItemRowView : View {
                 iconColor: .red,
                 iconName: "list.bullet",
                 info: "Created by Sid",
-                reminders: nil
+                reminders: []
             )
         )
     }

@@ -11,48 +11,38 @@ struct TitleItemView: View {
     var titleItem : Title
     
     var body : some View {
-        HStack{
+        HStack(alignment : .center){
             Image(systemName: titleItem.iconName)
                 .foregroundStyle(.white)
-                .frame(width: 36, height: 36)
+                .frame(width: 32, height: 32)
                 .background{
                     Circle()
-                        .fill(titleItem.iconColor)
+                        .fill(titleItem.iconColor.color)
                 }
             
-            VStack(spacing : 0){
-                HStack {
-                    VStack (alignment : .leading){
-                        Text(titleItem.title)
-                            .font(
-                                Font
-                                    .system(
-                                        size: 22,
-                                        weight: .regular,
-                                        design: .rounded
-                                    )
-                            )
-                            .foregroundStyle(.black)
-                        if(titleItem.info != "" ) {
-                            Text(titleItem.info ?? "")
-                                .foregroundStyle(.gray)
-                                .font(Font.system(size: 14, weight: .regular, design: .rounded))
-                        }
-                    }
-                    .padding(.leading, 5)
-                    
-                    Spacer()
-                    
-                    Text("\(titleItem.count)")
-                        .font(
-                            Font.system(size: 22, weight: .semibold, design: .rounded)
-                        )
+            
+            VStack(alignment : .leading) {
+                Text(titleItem.title)
+                    .font(Font.system(
+                        size: 20,
+                        weight: .regular,
+                        design: .rounded))
+                    .foregroundStyle(.black)
+                if(titleItem.info != nil ) {
+                    Text(titleItem.info ?? "")
                         .foregroundStyle(.gray)
+                        .font(Font.system(size: 12, weight: .regular, design: .rounded))
                 }
             }
+            Spacer()
             
+            Text("\(titleItem.count)")
+                .font(
+                    Font.system(size: 20, weight: .semibold, design: .rounded)
+                )
+                .foregroundStyle(.gray)
         }
-
+        .frame(height: 60, alignment: .center)
     }
 }
 
@@ -63,7 +53,7 @@ struct TitleItemView: View {
             iconColor: .red,
             iconName: "list.bullet",
             info: "Created by Sid",
-            reminders: nil
+            reminders: []
         )
     )
 }

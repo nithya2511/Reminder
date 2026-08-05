@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum RepeatOption : String, CaseIterable, Identifiable {
+enum RepeatOption : String, CaseIterable, Identifiable, Codable {
     case never = "Never"
     case daily = "Daily"
     case weekly = "Weekly"
@@ -58,13 +58,13 @@ class CreateNewReminderViewModel: ObservableObject {
     
     @Published var repeatOption : RepeatOption = .never
     
-    @Published var selectedListName : String = ""
+    @Published var selectedID : UUID?
     
     @Published var isShowingDetailInfoSheet = false
     
     init(titles : [Title]) {
         self.reminderListTitles = titles
-        self.selectedListName = titles.first?.title ?? ""
+        self.selectedID = titles.first?.id
     }
     
     var hasUnsavedChanges : Bool {
@@ -159,7 +159,7 @@ class CreateNewReminderViewModel: ObservableObject {
             time: isTimeEnabled ? selectedTime : nil,
             repeatOption: repeatOption,
             isUrgent: isUrgent,
-            list: selectedListName,
+            listID: selectedID,
             details: ""
         )
     }

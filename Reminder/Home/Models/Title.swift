@@ -8,26 +8,26 @@
 import SwiftUI
 
 
-struct Title : Identifiable {
-    let id : UUID
-    let title: String
-    let iconColor : Color
-    let iconName : String
-    let info : String?
-    let reminders : [Reminder]?
-    let isPinned : Bool
+struct Title : Identifiable, Codable {
+    var id : UUID
+    var title: String
+    var iconColor : ListColor
+    var iconName : String
+    var info : String?
+    var reminders : [Reminder]
+    var isPinned : Bool
     
     var count : Int {
-        reminders?.count ?? 0
+        reminders.count
     }
     
     init(
         id: UUID = UUID(),
         title: String,
-        iconColor: Color,
+        iconColor: ListColor,
         iconName: String = "list.bullet",
         info: String?,
-        reminders: [Reminder]?,
+        reminders: [Reminder] = [],
         isPinned : Bool = false
     ) {
         self.id = id

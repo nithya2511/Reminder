@@ -236,11 +236,11 @@ struct MoreOptionsSection : View {
                 rowTitle: "List",
                 subtitle: "",
                 onTap:  {viewModel.listRowTapped()}) {
-                    Picker("", selection: $viewModel.selectedListName) {
+                    Picker("", selection: $viewModel.selectedID) {
                         ForEach(viewModel.reminderListTitles){
                             title in
                             Text(title.title)
-                                .tag(title.title)
+                                .tag(Optional(title.id))
                         }
                     }
                     .pickerStyle(.menu)

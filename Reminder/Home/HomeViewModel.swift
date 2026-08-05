@@ -22,6 +22,7 @@ enum HomeSheet : Identifiable {
 
 
 class HomeViewModel : ObservableObject {
+    private let store = ReminderStore()
     @Published var searchText: String = ""
     @Published private(set) var titleNames : [Title] = []
     @Published var navigationPath = NavigationPath()
@@ -29,12 +30,24 @@ class HomeViewModel : ObservableObject {
     
     private var allReminders : [Reminder] {
         titleNames.flatMap { title in
-            title.reminders ?? []
+            title.reminders
         }
     }
     
     init() {
-        loadTitleNames()
+        let savedLists = store.loadLists()
+        
+        if savedLists.isEmpty {
+            titleNames = [
+                Title(
+                    title: "Reminders", iconColor: .blue, info: nil
+                )
+            ]
+            
+            store.saveLists(titleNames)
+        } else {
+            titleNames = savedLists
+        }
     }
     
     private func count(for category : ReminderCategory) -> Int {
@@ -97,72 +110,10 @@ class HomeViewModel : ObservableObject {
         activeSheet = .createReminder
     }
     
-    func loadTitleNames() {
-        titleNames  = [
-            Title(
-                title: "Pantry",
-                iconColor: Color.red,
-                iconName: "list.bullet",
-                info: nil,
-                reminders: [
-                    Reminder(title: "Item1", notes: ""),
-                    Reminder(title: "Item2", notes: ""),
-                    Reminder(title: "Item3", notes: "")
-                ]
-            ),
-            Title(
-                title: "Reminder",
-                iconColor: .blue,
-                iconName: "list.bullet",
-                info: nil,
-                reminders: [
-                    Reminder(title: "Item1", notes: ""),
-                    Reminder(title: "Item2", notes: ""),
-                    Reminder(title: "Item3", notes: "")
-                ]
-            ),
-            Title(
-                title: "Use immediatly",
-                iconColor: .orange,
-                iconName: "list.bullet",
-                info: nil,
-                reminders: [
-                    Reminder(title: "Item1", notes: ""),
-                    Reminder(title: "Item2", notes: ""),
-                    Reminder(title: "Item3", notes: "")
-                ]
-            ),
-            Title(
-                title: "Shopping List",
-                iconColor: .gray,
-                iconName: "list.bullet",
-                info: nil,
-                reminders: [
-                    Reminder(title: "Item1", notes: ""),
-                    Reminder(title: "Item2", notes: ""),
-                    Reminder(
-                        title: "Item3",
-                        notes: ""
-                    ),
-                    Reminder(title: "ItemLast", notes: "")
-]
-            ),
-            Title(
-                title: "Kaufland",
-                iconColor: .black,
-                iconName: "list.bullet",
-                info: nil,
-                reminders: [
-                    Reminder(title: "Item1", notes: ""),
-                    Reminder(title: "Item2", notes: ""),
-                    Reminder(title: "Item3", notes: "")
-                ]
-            )
-        ]
-    }
-    
     func addListAndOpen(named title : Title) {
         titleNames.append(title)
+        store.saveLists(titleNames)
+        
         activeSheet = nil
         navigationPath.append(title.id)
     }
@@ -173,6 +124,7 @@ class HomeViewModel : ObservableObject {
     
     func deleteList(id : UUID) {
         titleNames.removeAll{$0.id == id}
+        store.saveLists(titleNames)
     }
     
     func infoTapped(id : UUID) {
@@ -198,6 +150,7 @@ class HomeViewModel : ObservableObject {
         guard let index = titleNames.firstIndex(where: {$0.id == updatedList.id}) else { return }
         
         titleNames[index] = updatedList
+        store.saveLists(titleNames)
         activeSheet = nil
     }
     
@@ -217,23 +170,15 @@ class HomeViewModel : ObservableObject {
     }
     
     func addReminder(_ reminder : Reminder) {
-        guard let index = titleNames.firstIndex(
-            where: {$0.title == reminder.list
-            }) else { return }
-        
-        let oldTitle = titleNames[index]
-        var reminders = oldTitle.reminders ?? []
-        reminders.append(reminder)
-        
-        titleNames[index] = Title(
-            id: oldTitle.id,
-            title: oldTitle.title,
-            iconColor: oldTitle.iconColor,
-            iconName: oldTitle.iconName,
-            info: oldTitle.info,
-            reminders: reminders
-        )
-        activeSheet = nil 
+        guard let listID = reminder.listID,
+        let index = titleNames.firstIndex(where: { $0.id == listID }) else {
+           return
+       }
+
+       titleNames[index].reminders.append(reminder)
+       store.saveLists(titleNames)
+
+       activeSheet = nil
     }
 }
 
