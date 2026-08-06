@@ -27,37 +27,28 @@ class ReminderListDetailViewModel: ObservableObject {
         var parts : [InfoPart] = []
         
         if let date = reminder.date {
-            parts.append(
-                    InfoPart(
-                        text: date
-                            .formatted(date: .abbreviated, time: .omitted),
-                        color: .red
-                    )
-                )
+            parts.append(.text(date
+                .formatted(date: .abbreviated, time: .omitted), .red))
+                
             
             if let time = reminder.time {
-                parts.append(
-                    InfoPart(
-                        text: time.formatted(date: .omitted, time: .shortened),
-                        color: .red
-                    )
-                )
+                parts.append(.text( time.formatted(date: .omitted, time: .shortened), .red))
             }
             
             if reminder.repeatOption != .never {
-                parts.append(InfoPart(text: "􀊞", color: .red))
-                parts
-                    .append(
-                        InfoPart(
-                            text: reminder.repeatOption.rawValue,
-                            color: .red
-                        )
-                    )
+                parts.append(.symbol("repeat", .red))
+                parts.append(.text(reminder.repeatOption.rawValue, .red))
             }
             
             if reminder.isUrgent {
-                parts.append(InfoPart(text: "􀐭", color: .gray))
+                parts.append(.symbol("alarm", .red))
             }
+            
+            if let tags = reminder.tags {
+                  for tag in tags {
+                      parts.append(.text("#\(tag)", .blue))
+                  }
+              }
             
            
         }

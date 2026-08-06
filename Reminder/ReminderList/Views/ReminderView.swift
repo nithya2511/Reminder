@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct InfoPart {
-    let text : String
-    let color : Color 
+enum InfoPart {
+    case text(String, Color)
+    case symbol(String, Color)
 }
 
 
@@ -82,10 +82,19 @@ struct ReminderView : View {
                         }
                 }
                 if !infoParts.isEmpty {
-                    Text(buildInfoText(from: infoParts))
-                        .font(.caption)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
+                    WrapLayout(spacing: 4, lineSpacing: 4) {
+                        ForEach(Array(infoParts.enumerated()), id : \.offset) {
+ _,
+ part in
+                            switch (part) {
+                            case .text(let text, let color) : Text(text)
+                                    .foregroundStyle(color)
+                            case .symbol(let name, let color) : Image(
+                                systemName: name).foregroundStyle(color)
+                            }
+                        }
+                    }
+                    .font(.caption)
                 }
                         
             }
@@ -95,19 +104,7 @@ struct ReminderView : View {
             HStack(spacing : 24) {
                
             }
-            //flag
-            //info icon
         }
-    }
-    
-    private func buildInfoText(from parts : [InfoPart]) -> AttributedString {
-        var result = AttributedString()
-        for part in parts {
-            var attributedPart = AttributedString(part.text)
-            attributedPart.foregroundColor = part.color
-            result.append(attributedPart)
-        }
-        return result
     }
 }
 
@@ -125,3 +122,4 @@ struct ReminderView : View {
          focusedField: $focusedField, infoParts: [], onSubmitReminder: {}
      )
  }
+
