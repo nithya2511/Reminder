@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RowView<Trailing:View> : View {
     var iconName : String
+    var iconForegroundColor : Color?
     var rowTitle : String
     var subtitle : String
     let onTap: () -> Void
@@ -19,6 +20,7 @@ struct RowView<Trailing:View> : View {
             Button(action: onTap) {
                 HStack(spacing : 20) {
                     Image(systemName: iconName)
+                        .foregroundStyle(iconForegroundColor ?? .black)
                     VStack(alignment : .leading){
                         Text(rowTitle)
                         if !subtitle.isEmpty {

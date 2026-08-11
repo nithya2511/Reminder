@@ -28,6 +28,7 @@ struct DetailInfoSheetView: View {
                     } label: {
                         Image(systemName: "checkmark")
                     }
+                    .disabled(!viewModel.hasUnsavedChanges)
                 }
             }
         }
@@ -38,22 +39,32 @@ struct OrganisationSection : View {
     @ObservedObject var viewModel : DetailInfoViewModel
     var body : some View {
         VStack(alignment: .leading){
-            Text("Organisation")
-                .font(.title)
+            Text("Organization")
+                .font(.title2)
                 .foregroundStyle(.gray)
                 .fontWeight(.medium)
             
             RowView(
                 iconName: "number",
+                iconForegroundColor: .gray,
                 rowTitle: "Tags",
                 subtitle: "",
                 onTap: {viewModel.tagsRowTapped()}) {
                     Button{
-                        
+                        viewModel.tagsRowTapped()
                     } label: {
                         Image(systemName: "chevron.right")
                     }
                     .foregroundStyle(.gray)
+                }
+                .sheet(isPresented: $viewModel.isShowingTagsSheet) {
+                    TagSheetView(
+                        tagText : $viewModel.tagText,
+                        tags : $viewModel.tags,
+                        selectedTags : $viewModel.selectedTags,
+                        onAddTag: viewModel.addTag,
+                        onToggleTag : viewModel.toggleTagSelection
+                    )
                 }
                 .padding()
                 .background {
@@ -63,7 +74,8 @@ struct OrganisationSection : View {
             
             VStack{
                 RowView(
-                    iconName: "Flag",
+                    iconName: "flag",
+                    iconForegroundColor: .gray,
                     rowTitle: "Flag",
                     subtitle: "",
                     onTap: {viewModel.flagRowTapped()}) {
@@ -74,6 +86,7 @@ struct OrganisationSection : View {
                 
                 RowView(
                     iconName: "exclamationmark.3",
+                    iconForegroundColor: .gray,
                     rowTitle: "Priority",
                     subtitle: "",
                     onTap: {viewModel.priorityRowTapped()}) {
@@ -108,6 +121,7 @@ struct PlacesPeopleSection : View {
             
             RowView(
                 iconName: "location",
+                iconForegroundColor: .gray,
                 rowTitle: "Location",
                 subtitle: "",
                 onTap: {viewModel.locationRowTapped()}) {
@@ -121,6 +135,7 @@ struct PlacesPeopleSection : View {
             
             RowView(
                 iconName: "message",
+                iconForegroundColor: .gray,
                 rowTitle: "When Messaging",
                 subtitle: "",
                 onTap: {viewModel.whenMessagingRowTapped()}) {
@@ -147,6 +162,7 @@ struct ImageSection : View {
         VStack{
             RowView(
                 iconName: "photo",
+                iconForegroundColor: .gray,
                 rowTitle: "Add Image",
                 subtitle: "",
                 onTap: {viewModel.addImageRowTapped()}) {
